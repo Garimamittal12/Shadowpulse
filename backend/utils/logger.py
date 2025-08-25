@@ -17,7 +17,6 @@ class Logger:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.DEBUG)
         
-        # Prevent duplicate handlers
         if not self.logger.handlers:
             self._setup_handlers()
     
