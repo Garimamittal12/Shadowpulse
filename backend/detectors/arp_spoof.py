@@ -43,20 +43,16 @@ class ARPSpoofDetector:
                 src_mac = arp_layer.hwsrc
                 dst_ip = arp_layer.pdst
                 op_code = arp_layer.op
-                
                 current_time = datetime.now()
-                
                 # Track ARP request frequency
                 if op_code == 1:  # ARP Request
                     self.arp_requests[src_ip].append(current_time)
-                    
                     # Remove old requests outside time window
                     cutoff_time = current_time - timedelta(seconds=self.time_window)
                     self.arp_requests[src_ip] = [
                         req_time for req_time in self.arp_requests[src_ip] 
                         if req_time > cutoff_time
                     ]
-                    
                     # Check if requests exceed threshold
                     if len(self.arp_requests[src_ip]) > self.threshold:
                         self.suspicious_ips.add(src_ip)
@@ -67,7 +63,6 @@ class ARPSpoofDetector:
                             "time_window": self.time_window,
                             "severity": "medium"
                         })
-                
                 # Track ARP responses for MAC conflicts
                 elif op_code == 2:  # ARP Reply
                     if src_ip in self.arp_table:
@@ -84,7 +79,6 @@ class ARPSpoofDetector:
                             })
                     else:
                         self.arp_table[src_ip] = src_mac
-                
                 # Detect gratuitous ARP (potential spoofing)
                 if op_code == 2 and src_ip == dst_ip:
                     self._generate_alert("gratuitous_arp", {
@@ -93,10 +87,8 @@ class ARPSpoofDetector:
                         "severity": "medium",
                         "description": "Gratuitous ARP detected - possible network reconnaissance"
                     })
-                    
         except Exception as e:
             self.logger.error(f"Error in ARP spoof detection: {e}")
-    
     def _generate_alert(self, alert_type: str, details: Dict):
         """Generate security alert"""
         alert = {
@@ -105,19 +97,15 @@ class ARPSpoofDetector:
             "alert_type": alert_type,
             "details": details
         }
-        
         self.logger.warning(f"ARP Spoofing Alert: {alert}")
         # Here you would typically send to alert management system
         return alert
-    
     def start_monitoring(self):
         """Start ARP spoofing detection"""
         if self.is_running:
             return
-            
         self.is_running = True
         self.logger.info("Starting ARP spoofing detection")
-        
         def monitor():
             try:
                 scapy.sniff(
@@ -128,7 +116,6 @@ class ARPSpoofDetector:
                 )
             except Exception as e:
                 self.logger.error(f"Error in ARP monitoring: {e}")
-        
         self.monitor_thread = threading.Thread(target=monitor, daemon=True)
         self.monitor_thread.start()
     
