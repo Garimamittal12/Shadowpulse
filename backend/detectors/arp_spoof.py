@@ -118,7 +118,6 @@ class ARPSpoofDetector:
                 self.logger.error(f"Error in ARP monitoring: {e}")
         self.monitor_thread = threading.Thread(target=monitor, daemon=True)
         self.monitor_thread.start()
-    
     def stop_monitoring(self):
         """Stop ARP spoofing detection"""
         self.is_running = False
