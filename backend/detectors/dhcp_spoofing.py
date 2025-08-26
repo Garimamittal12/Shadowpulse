@@ -4,10 +4,8 @@ import logging
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Dict, Set, List
-
 class DHCPSpoofingDetector:
     """DHCP Spoofing Attack Detector"""
-    
     def __init__(self, interface: str = None, authorized_servers: List[str] = None):
         self.interface = interface
         self.authorized_servers = set(authorized_servers) if authorized_servers else set()
@@ -15,13 +13,11 @@ class DHCPSpoofingDetector:
         self.dhcp_offers = defaultdict(list)  # Track DHCP offers
         self.is_running = False
         self.logger = logging.getLogger(__name__)
-    
     def detect_dhcp_spoofing(self, packet):
         """Analyze DHCP packets for spoofing indicators"""
         try:
             if packet.haslayer(scapy.DHCP):
                 dhcp_layer = packet[scapy.DHCP]
-                
                 # Extract DHCP options
                 dhcp_options = {}
                 for option in dhcp_layer.options:
